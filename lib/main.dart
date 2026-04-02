@@ -64,7 +64,7 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
       // 🔥 Load first 10 fast
       for (int i = 1; i <= initialLoad; i++) {
         String frameNumber = i.toString().padLeft(3, '0');
-        String path = 'assets/frames/ezgif-frame-$frameNumber.png';
+        String path = 'assets/it/ezgif-frame-$frameNumber.png';
 
         final image = await _loadSingleFrame(path);
         initialFrames.add(image);
