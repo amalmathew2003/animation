@@ -56,19 +56,17 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
 
 double _progress = 0.0; // 🔥 move outside (class level)
 
+
 Future<void> _loadFrames() async {
   try {
-    List<ui.Image> initialFrames = [];
+    List<ui.Image> loadedFrames = [];
 
-    int initialLoad = 10;
-
-    // 🔥 Load first 10 fast
-    for (int i = 1; i <= initialLoad; i++) {
+    for (int i = 1; i <= myTotalFiles; i++) {
       String frameNumber = i.toString().padLeft(3, '0');
       String path = 'assets/frames/ezgif-frame-$frameNumber.png';
 
       final image = await _loadSingleFrame(path);
-      initialFrames.add(image);
+      loadedFrames.add(image);
 
       // 🔥 update progress
       setState(() {
@@ -76,13 +74,11 @@ Future<void> _loadFrames() async {
       });
     }
 
+    // 🔥 ONLY after all loaded
     setState(() {
-      _frames = initialFrames;
-      _isLoading = false;
+      _frames = loadedFrames;
+      _isLoading = false; // 👉 switch screen here
     });
-
-    // 🔥 Load remaining in background
-    _loadRemainingFrames();
 
   } catch (e) {
     debugPrint("Frame loading error: $e");
