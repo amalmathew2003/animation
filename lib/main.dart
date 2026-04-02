@@ -2,7 +2,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
 // Loading
 import 'package:newscrollanimation/widgets/loading_screen.dart';
 import 'package:flutter/gestures.dart';
@@ -50,34 +49,32 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
 
   double _progress = 0.0; // 🔥 move outside (class level)
 
+  Future<void> _loadFrames() async {
+    try {
+      List<ui.Image> loadedFrames = [];
 
-Future<void> _loadFrames() async {
-  try {
-    List<ui.Image> loadedFrames = [];
+      for (int i = 1; i <= myTotalFiles; i++) {
+        String frameNumber = i.toString().padLeft(3, '0');
+        String path = 'assets/vasuu/ezgif-frame-$frameNumber.png';
 
-    for (int i = 1; i <= myTotalFiles; i++) {
-      String frameNumber = i.toString().padLeft(3, '0');
-      String path = 'assets/vasuu/ezgif-frame-$frameNumber.png';
+        final image = await _loadSingleFrame(path);
+        loadedFrames.add(image);
 
-      final image = await _loadSingleFrame(path);
-      loadedFrames.add(image);
+        // 🔥 update progress
+        setState(() {
+          _progress = i / myTotalFiles;
+        });
+      }
 
-      // 🔥 update progress
+      // 🔥 ONLY after all loaded
       setState(() {
-        _progress = i / myTotalFiles;
+        _frames = loadedFrames;
+        _isLoading = false; // 👉 switch screen here
       });
+    } catch (e) {
+      debugPrint("Frame loading error: $e");
     }
-
-    // 🔥 ONLY after all loaded
-    setState(() {
-      _frames = loadedFrames;
-      _isLoading = false; // 👉 switch screen here
-    });
-
-  } catch (e) {
-    debugPrint("Frame loading error: $e");
   }
-}
 
   Future<void> _loadRemainingFrames() async {
     for (int i = 11; i <= myTotalFiles; i++) {
@@ -130,7 +127,7 @@ Future<void> _loadFrames() async {
     return Scaffold(
       backgroundColor: Colors.black,
       body: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 500),
 
         child: _isLoading
             ? LoadingScreen(progress: _progress)
@@ -148,32 +145,23 @@ Future<void> _loadFrames() async {
                       painter: VideoFramePainter(_frames[_currentIndex]),
                     ),
                   ),
-        
+
                   _buildStaticUI(),
-        
+
                   SingleChildScrollView(
                     controller: _scrollController,
                     physics: const BouncingScrollPhysics(),
                     child: Column(
                       children: [
-                        _buildFullPageSection(
-                          "BORN ON THE TRACK.",
-                          "THE M3 COMPETITION",
-                        ),
-                        _buildFullPageSection("503 HP.", "TWIN-POWER TURBO"),
-                        _buildFullPageSection(
-                          "0-60 IN 3.4s.",
-                          "M-XDRIVE PRECISION",
-                        ),
-        
-                        _buildFullPageSection(
-                          "0-60 IN 3.4s.",
-                          "M-XDRIVE PRECISION",
-                        ),
-        
+                        _buildFullPageSection("MY NAME IS VASU.", ""),
+                        _buildFullPageSection("മനുഷ്യന് അല്ലെ പുള്ളേ", ""),
+                        _buildFullPageSection("", ""),
+
+                        _buildFullPageSection("", ""),
+
                         /// 🔥 PERFECT CONTROL SPACE (ANIMATION ONLY)
                         SizedBox(height: MediaQuery.of(context).size.height),
-        
+
                         /// 🔥 ALWAYS PRESENT (NO SKIP)
                         // Container(
                         //   width: double.infinity,
@@ -237,13 +225,30 @@ Future<void> _loadFrames() async {
               ),
             ),
             const SizedBox(height: 10),
-            Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 60,
-                fontWeight: FontWeight.w900,
-                letterSpacing: -3,
+            ShaderMask(
+              shaderCallback: (bounds) {
+                return const LinearGradient(
+                  colors: [
+                    Colors.red,
+                    Colors.orange,
+                    Colors.yellow,
+                    Colors.green,
+                    Colors.blue,
+                    Colors.indigo,
+                    Colors.purple,
+                  ],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ).createShader(bounds);
+              },
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 60,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -3,
+                  color: Colors.white, // required
+                ),
               ),
             ),
           ],
