@@ -2,6 +2,12 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// Pages
+import 'package:newscrollanimation/screens/contact_page.dart';
+import 'package:newscrollanimation/screens/experiencepage.dart';
+import 'package:newscrollanimation/screens/gallerypage.dart';
+import 'package:newscrollanimation/screens/modelpage.dart';
+
 // Loading
 import 'package:newscrollanimation/widgets/loading_screen.dart';
 import 'package:flutter/gestures.dart';
@@ -38,8 +44,11 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
   bool _isLoading = true;
   int _currentIndex = 0;
 
-  final int initialLoad = 20;
-  final int myTotalFiles = 200;
+  /// 🔥 NEW: CONTROL NEXT PAGE
+  bool _animationCompleted = false;
+
+  final int myTotalFiles = 151;
+
   @override
   void initState() {
     super.initState();
@@ -49,44 +58,23 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
 
   Future<void> _loadFrames() async {
     try {
-      List<ui.Image> initialFrames = [];
+      List<Future<ui.Image>> futures = [];
 
-      int batchSize = 3; // ✅ control speed
+      for (int i = 1; i <= myTotalFiles; i++) {
+        String frameNumber = i.toString().padLeft(3, '0');
+        String path = 'assets/frames/ezgif-frame-$frameNumber.png';
 
-      for (int i = 1; i <= initialLoad; i += batchSize) {
-        List<Future<ui.Image>> batch = [];
-
-        for (int j = i; j < i + batchSize && j <= initialLoad; j++) {
-          String frameNumber = j.toString().padLeft(3, '0');
-          String path = 'assets/vasuu/ezgif-frame-$frameNumber.png';
-
-          batch.add(_loadSingleFrame(path));
-        }
-
-        final images = await Future.wait(batch);
-        initialFrames.addAll(images);
-
-        // 🔥 show early frames immediately
-        setState(() {
-          _frames = List.from(initialFrames);
-          _isLoading = false;
-        });
+        futures.add(_loadSingleFrame(path));
       }
 
-      _loadRemainingFrames();
+      final loadedFrames = await Future.wait(futures);
+
+      setState(() {
+        _frames = loadedFrames;
+        _isLoading = false;
+      });
     } catch (e) {
       debugPrint("Frame loading error: $e");
-    }
-  }
-
-  Future<void> _loadRemainingFrames() async {
-    for (int i = initialLoad + 1; i <= myTotalFiles; i++) {
-      String frameNumber = i.toString().padLeft(3, '0');
-      String path = 'assets/vasuu/ezgif-frame-$frameNumber.png';
-
-      final image = await _loadSingleFrame(path);
-
-      _frames.add(image); // no setState → smooth
     }
   }
 
@@ -116,7 +104,10 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
 
     /// ✅ LAST FRAME DETECTION
     if (percentage >= 1.0) {
-    } else {}
+      setState(() => _animationCompleted = true);
+    } else {
+      setState(() => _animationCompleted = false);
+    }
   }
 
   @override
@@ -147,34 +138,37 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
                   physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [
-                      _buildFullPageSection("MY NAME IS VISWAJITH", ''),
-                      _buildFullPageSection("VASUUUUUUUUUUUUUUUU", "CALL ME"),
-                      // _buildFullPageSection(
-                      //   "0-60 IN 3.4s.",
-                      //   "M-XDRIVE PRECISION",
-                      // ),
+                      _buildFullPageSection(
+                        "BORN ON THE TRACK.",
+                        "THE M3 COMPETITION",
+                      ),
+                      _buildFullPageSection("503 HP.", "TWIN-POWER TURBO"),
+                      _buildFullPageSection(
+                        "0-60 IN 3.4s.",
+                        "M-XDRIVE PRECISION",
+                      ),
 
-                      // _buildFullPageSection(
-                      //   "0-60 IN 3.4s.",
-                      //   "M-XDRIVE PRECISION",
-                      // ),
+                      _buildFullPageSection(
+                        "0-60 IN 3.4s.",
+                        "M-XDRIVE PRECISION",
+                      ),
 
                       /// 🔥 PERFECT CONTROL SPACE (ANIMATION ONLY)
                       SizedBox(height: MediaQuery.of(context).size.height),
 
                       /// 🔥 ALWAYS PRESENT (NO SKIP)
-                      // Container(
-                      //   width: double.infinity,
-                      //   color: Colors.black,
-                      //   child: Column(
-                      //     children: const [
-                      //       ModelsPage(),
-                      //       ExperiencePage(),
-                      //       GalleryPage(),
-                      //       ContactPage(),
-                      //     ],
-                      //   ),
-                      // ),
+                      Container(
+                        width: double.infinity,
+                        color: Colors.black,
+                        child: Column(
+                          children: const [
+                            ModelsPage(),
+                            ExperiencePage(),
+                            GalleryPage(),
+                            ContactPage(),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -217,10 +211,10 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
             Text(
               subtitle,
               style: const TextStyle(
-                color: Colors.red,
+                color: Colors.blueAccent,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 3,
-                fontSize: 30,
+                fontSize: 14,
               ),
             ),
             const SizedBox(height: 10),
