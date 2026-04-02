@@ -20,7 +20,7 @@ class LoadingScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              "LOADING M POWER",
+              "LOADING VASUUU POWER",
               style: TextStyle(
                 color: Colors.white.withOpacity(0.5),
                 letterSpacing: 4,

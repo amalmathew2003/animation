@@ -1,9 +1,10 @@
-name: 🚀 Deploy Flutter Web (Portfolio)
+name: 🚀 Flutter Web Multi-Branch Deploy
 
 on:
   push:
     branches:
       - main
+      - dev
 
 permissions:
   contents: write
@@ -14,7 +15,7 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4   # ✅ updated
+        uses: actions/checkout@v4
 
       - name: 🛠 Setup Flutter
         uses: subosito/flutter-action@v2
@@ -24,11 +25,19 @@ jobs:
       - name: 📦 Install dependencies
         run: flutter pub get
 
+      # 🔥 Dynamic base-href
       - name: 🌐 Build Web
-        run: flutter build web --release --base-href "/animation/"
+        run: |
+          if [[ "${GITHUB_REF##*/}" == "main" ]]; then
+            flutter build web --release --base-href "/animation/"
+          else
+            flutter build web --release --base-href "/animation/dev/"
+          fi
 
-      - name: 🚀 Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4   # ✅ updated
+      # 🔥 Deploy different folders
+      - name: 🚀 Deploy
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: build/web
+          destination_dir: ${{ github.ref_name }}
