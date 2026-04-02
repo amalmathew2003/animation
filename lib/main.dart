@@ -2,11 +2,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-// Pages
-import 'package:newscrollanimation/screens/contact_page.dart';
-import 'package:newscrollanimation/screens/experiencepage.dart';
-import 'package:newscrollanimation/screens/gallerypage.dart';
-import 'package:newscrollanimation/screens/modelpage.dart';
 
 // Loading
 import 'package:newscrollanimation/widgets/loading_screen.dart';
@@ -55,37 +50,34 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
 
   double _progress = 0.0; // 🔥 move outside (class level)
 
-  Future<void> _loadFrames() async {
-    try {
-      List<ui.Image> initialFrames = [];
 
-      int initialLoad = 10;
+Future<void> _loadFrames() async {
+  try {
+    List<ui.Image> loadedFrames = [];
 
-      // 🔥 Load first 10 fast
-      for (int i = 1; i <= initialLoad; i++) {
-        String frameNumber = i.toString().padLeft(3, '0');
-        String path = 'assets/vasuu/ezgif-frame-$frameNumber.png';
+    for (int i = 1; i <= myTotalFiles; i++) {
+      String frameNumber = i.toString().padLeft(3, '0');
+      String path = 'assets/vasuu/ezgif-frame-$frameNumber.png';
 
-        final image = await _loadSingleFrame(path);
-        initialFrames.add(image);
+      final image = await _loadSingleFrame(path);
+      loadedFrames.add(image);
 
-        // 🔥 update progress
-        setState(() {
-          _progress = i / myTotalFiles;
-        });
-      }
-
+      // 🔥 update progress
       setState(() {
-        _frames = initialFrames;
-        _isLoading = false;
+        _progress = i / myTotalFiles;
       });
-
-      // 🔥 Load remaining in background
-      _loadRemainingFrames();
-    } catch (e) {
-      debugPrint("Frame loading error: $e");
     }
+
+    // 🔥 ONLY after all loaded
+    setState(() {
+      _frames = loadedFrames;
+      _isLoading = false; // 👉 switch screen here
+    });
+
+  } catch (e) {
+    debugPrint("Frame loading error: $e");
   }
+}
 
   Future<void> _loadRemainingFrames() async {
     for (int i = 11; i <= myTotalFiles; i++) {
@@ -137,66 +129,70 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: _isLoading
-          ? LoadingScreen(progress: _progress)
-          : _frames.isEmpty
-          ? const Center(
-              child: Text(
-                "Frames not loaded",
-                style: TextStyle(color: Colors.white),
-              ),
-            )
-          : Stack(
-              children: [
-                Positioned.fill(
-                  child: CustomPaint(
-                    painter: VideoFramePainter(_frames[_currentIndex]),
-                  ),
+      body: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 500),
+
+        child: _isLoading
+            ? LoadingScreen(progress: _progress)
+            : _frames.isEmpty
+            ? const Center(
+                child: Text(
+                  "Frames not loaded",
+                  style: TextStyle(color: Colors.white),
                 ),
-
-                _buildStaticUI(),
-
-                SingleChildScrollView(
-                  controller: _scrollController,
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    children: [
-                      _buildFullPageSection(
-                        "BORN ON THE TRACK.",
-                        "THE M3 COMPETITION",
-                      ),
-                      _buildFullPageSection("503 HP.", "TWIN-POWER TURBO"),
-                      _buildFullPageSection(
-                        "0-60 IN 3.4s.",
-                        "M-XDRIVE PRECISION",
-                      ),
-
-                      _buildFullPageSection(
-                        "0-60 IN 3.4s.",
-                        "M-XDRIVE PRECISION",
-                      ),
-
-                      /// 🔥 PERFECT CONTROL SPACE (ANIMATION ONLY)
-                      SizedBox(height: MediaQuery.of(context).size.height),
-
-                      /// 🔥 ALWAYS PRESENT (NO SKIP)
-                      Container(
-                        width: double.infinity,
-                        color: Colors.black,
-                        child: Column(
-                          children: const [
-                            ModelsPage(),
-                            ExperiencePage(),
-                            GalleryPage(),
-                            ContactPage(),
-                          ],
+              )
+            : Stack(
+                children: [
+                  Positioned.fill(
+                    child: CustomPaint(
+                      painter: VideoFramePainter(_frames[_currentIndex]),
+                    ),
+                  ),
+        
+                  _buildStaticUI(),
+        
+                  SingleChildScrollView(
+                    controller: _scrollController,
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        _buildFullPageSection(
+                          "BORN ON THE TRACK.",
+                          "THE M3 COMPETITION",
                         ),
-                      ),
-                    ],
+                        _buildFullPageSection("503 HP.", "TWIN-POWER TURBO"),
+                        _buildFullPageSection(
+                          "0-60 IN 3.4s.",
+                          "M-XDRIVE PRECISION",
+                        ),
+        
+                        _buildFullPageSection(
+                          "0-60 IN 3.4s.",
+                          "M-XDRIVE PRECISION",
+                        ),
+        
+                        /// 🔥 PERFECT CONTROL SPACE (ANIMATION ONLY)
+                        SizedBox(height: MediaQuery.of(context).size.height),
+        
+                        /// 🔥 ALWAYS PRESENT (NO SKIP)
+                        // Container(
+                        //   width: double.infinity,
+                        //   color: Colors.black,
+                        //   child: Column(
+                        //     children: const [
+                        //       ModelsPage(),
+                        //       ExperiencePage(),
+                        //       GalleryPage(),
+                        //       ContactPage(),
+                        //     ],
+                        //   ),
+                        // ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+      ),
     );
   }
 
