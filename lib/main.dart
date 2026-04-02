@@ -44,7 +44,6 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
   bool _isLoading = true;
   int _currentIndex = 0;
 
-
   final int myTotalFiles = 151;
 
   @override
@@ -54,52 +53,51 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
     _scrollController.addListener(_onScroll);
   }
 
-double _progress = 0.0; // 🔥 move outside (class level)
+  double _progress = 0.0; // 🔥 move outside (class level)
 
+  Future<void> _loadFrames() async {
+    try {
+      List<ui.Image> loadedFrames = [];
 
-Future<void> _loadFrames() async {
-  try {
-    List<ui.Image> loadedFrames = [];
+      for (int i = 1; i <= myTotalFiles; i++) {
+        String frameNumber = i.toString().padLeft(3, '0');
+        String path = 'assets/frames/ezgif-frame-$frameNumber.png';
 
-    for (int i = 1; i <= myTotalFiles; i++) {
+        final image = await _loadSingleFrame(path);
+        loadedFrames.add(image);
+
+        // 🔥 update progress
+        setState(() {
+          _progress = i / myTotalFiles;
+        });
+      }
+
+      // 🔥 ONLY after all loaded
+      setState(() {
+        _frames = loadedFrames;
+        _isLoading = false; // 👉 switch screen here
+      });
+    } catch (e) {
+      debugPrint("Frame loading error: $e");
+    }
+  }
+
+  Future<void> _loadRemainingFrames() async {
+    for (int i = 11; i <= myTotalFiles; i++) {
       String frameNumber = i.toString().padLeft(3, '0');
       String path = 'assets/frames/ezgif-frame-$frameNumber.png';
 
       final image = await _loadSingleFrame(path);
-      loadedFrames.add(image);
+      _frames.add(image);
 
       // 🔥 update progress
-      setState(() {
-        _progress = i / myTotalFiles;
-      });
-    }
-
-    // 🔥 ONLY after all loaded
-    setState(() {
-      _frames = loadedFrames;
-      _isLoading = false; // 👉 switch screen here
-    });
-
-  } catch (e) {
-    debugPrint("Frame loading error: $e");
-  }
-}
-Future<void> _loadRemainingFrames() async {
-  for (int i = 11; i <= myTotalFiles; i++) {
-    String frameNumber = i.toString().padLeft(3, '0');
-    String path = 'assets/frames/ezgif-frame-$frameNumber.png';
-
-    final image = await _loadSingleFrame(path);
-    _frames.add(image);
-
-    // 🔥 update progress
-    if (i % 5 == 0) {
-      setState(() {
-        _progress = i / myTotalFiles;
-      });
+      if (i % 5 == 0) {
+        setState(() {
+          _progress = i / myTotalFiles;
+        });
+      }
     }
   }
-}
 
   Future<ui.Image> _loadSingleFrame(String path) async {
     final data = await rootBundle.load(path);
@@ -127,74 +125,77 @@ Future<void> _loadRemainingFrames() async {
 
     /// ✅ LAST FRAME DETECTION
     if (percentage >= 1.0) {
-    } else {
-    }
+    } else {}
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: _isLoading
-          ? LoadingScreen(progress: _progress)
-          : _frames.isEmpty
-          ? const Center(
-              child: Text(
-                "Frames not loaded",
-                style: TextStyle(color: Colors.white),
-              ),
-            )
-          : Stack(
-              children: [
-                Positioned.fill(
-                  child: CustomPaint(
-                    painter: VideoFramePainter(_frames[_currentIndex]),
-                  ),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 500),
+
+        child: _isLoading
+            ? LoadingScreen(progress: _progress)
+            : _frames.isEmpty
+            ? const Center(
+                child: Text(
+                  "Frames not loaded",
+                  style: TextStyle(color: Colors.white),
                 ),
+              )
+            : Stack(
+                children: [
+                  Positioned.fill(
+                    child: CustomPaint(
+                      painter: VideoFramePainter(_frames[_currentIndex]),
+                    ),
+                  ),
 
-                _buildStaticUI(),
+                  _buildStaticUI(),
 
-                SingleChildScrollView(
-                  controller: _scrollController,
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    children: [
-                      _buildFullPageSection(
-                        "BORN ON THE TRACK.",
-                        "THE M3 COMPETITION",
-                      ),
-                      _buildFullPageSection("503 HP.", "TWIN-POWER TURBO"),
-                      _buildFullPageSection(
-                        "0-60 IN 3.4s.",
-                        "M-XDRIVE PRECISION",
-                      ),
-
-                      _buildFullPageSection(
-                        "0-60 IN 3.4s.",
-                        "M-XDRIVE PRECISION",
-                      ),
-
-                      /// 🔥 PERFECT CONTROL SPACE (ANIMATION ONLY)
-                      SizedBox(height: MediaQuery.of(context).size.height),
-
-                      /// 🔥 ALWAYS PRESENT (NO SKIP)
-                      Container(
-                        width: double.infinity,
-                        color: Colors.black,
-                        child: Column(
-                          children: const [
-                            ModelsPage(),
-                            ExperiencePage(),
-                            GalleryPage(),
-                            ContactPage(),
-                          ],
+                  SingleChildScrollView(
+                    controller: _scrollController,
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        _buildFullPageSection(
+                          "BORN ON THE TRACK.",
+                          "THE M3 COMPETITION",
                         ),
-                      ),
-                    ],
+                        _buildFullPageSection("503 HP.", "TWIN-POWER TURBO"),
+                        _buildFullPageSection(
+                          "0-60 IN 3.4s.",
+                          "M-XDRIVE PRECISION",
+                        ),
+
+                        _buildFullPageSection(
+                          "0-60 IN 3.4s.",
+                          "M-XDRIVE PRECISION",
+                        ),
+
+                        /// 🔥 PERFECT CONTROL SPACE (ANIMATION ONLY)
+                        SizedBox(height: MediaQuery.of(context).size.height),
+
+                        /// 🔥 ALWAYS PRESENT (NO SKIP)
+                        Container(
+                          width: double.infinity,
+                          color: Colors.black,
+                          child: Column(
+                            children: const [
+                              ModelsPage(),
+                              ExperiencePage(),
+                              GalleryPage(),
+                              ContactPage(),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+      ),
     );
   }
 
