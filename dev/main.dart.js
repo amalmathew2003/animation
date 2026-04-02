@@ -56386,7 +56386,7 @@ var $async$oE=A.O(function(a,b){if(a===1){p.push(b)
 s=q}for(;;)switch(s){case 0:q=3
 n=A.d([],t.C1)
 m=1
-case 6:if(!(m<=20)){s=8
+case 6:if(!(m<=50)){s=8
 break}l=B.d.jo(J.cW(m),3,"0")
 k="assets/vasuu/ezgif-frame-"+A.m(l)+".png"
 s=9
@@ -56414,7 +56414,7 @@ case 1:return A.K(p.at(-1),r)}})
 return A.M($async$oE,r)},
 oF(){var s=0,r=A.N(t.H),q=this,p,o
 var $async$oF=A.O(function(a,b){if(a===1)return A.K(b,r)
-for(;;)switch(s){case 0:p=21
+for(;;)switch(s){case 0:p=51
 case 2:if(!(p<=200)){s=4
 break}s=5
 return A.Q(q.iQ("assets/vasuu/ezgif-frame-"+B.d.jo(B.h.j(p),3,"0")+".png"),$async$oF)
