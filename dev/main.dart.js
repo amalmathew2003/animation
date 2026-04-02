@@ -62339,7 +62339,7 @@ m=10
 l=1
 case 6:if(!(l<=m)){s=8
 break}k=B.d.i9(J.dj(l),3,"0")
-j="assets/frames/ezgif-frame-"+A.k(k)+".png"
+j="assets/it/ezgif-frame-"+A.k(k)+".png"
 s=9
 return A.R(o.jx(j),$async$q6)
 case 9:i=b
