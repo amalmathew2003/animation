@@ -58,7 +58,7 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
 
         for (int j = i; j < i + batchSize && j <= initialLoad; j++) {
           String frameNumber = j.toString().padLeft(3, '0');
-          String path = 'assets/vasuu/ezgif-frame-$frameNumber.png';
+          String path = 'assets/it/ezgif-frame-$frameNumber.png';
 
           batch.add(_loadSingleFrame(path));
         }
