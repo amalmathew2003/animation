@@ -38,8 +38,8 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
   bool _isLoading = true;
   int _currentIndex = 0;
 
-  final int myTotalFiles = 200;
-
+final int initialLoad = 20;
+final int myTotalFiles = 200;
   @override
   void initState() {
     super.initState();
@@ -49,23 +49,36 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
 
   Future<void> _loadFrames() async {
     try {
-      List<Future<ui.Image>> futures = [];
+      List<ui.Image> initialFrames = [];
 
-      for (int i = 1; i <= myTotalFiles; i++) {
+      for (int i = 1; i <= initialLoad; i++) {
         String frameNumber = i.toString().padLeft(3, '0');
         String path = 'assets/vasuu/ezgif-frame-$frameNumber.png';
 
-        futures.add(_loadSingleFrame(path));
+        final image = await _loadSingleFrame(path);
+        initialFrames.add(image);
       }
 
-      final loadedFrames = await Future.wait(futures);
-
       setState(() {
-        _frames = loadedFrames;
+        _frames = initialFrames;
         _isLoading = false;
       });
+
+      // 🔥 Load remaining in background
+      _loadRemainingFrames();
     } catch (e) {
       debugPrint("Frame loading error: $e");
+    }
+  }
+
+  Future<void> _loadRemainingFrames() async {
+    for (int i = initialLoad + 1; i <= myTotalFiles; i++) {
+      String frameNumber = i.toString().padLeft(3, '0');
+      String path = 'assets/vasuu/ezgif-frame-$frameNumber.png';
+
+      final image = await _loadSingleFrame(path);
+
+      _frames.add(image); // no setState → smooth
     }
   }
 
