@@ -56393,7 +56393,7 @@ break}k=A.d([],d)
 j=l
 for(;;){if(!(j<l+m&&j<=20))break
 i=B.d.jo(J.cW(j),3,"0")
-h="assets/vasuu/ezgif-frame-"+A.m(i)+".png"
+h="assets/it/ezgif-frame-"+A.m(i)+".png"
 J.dJ(k,o.iQ(h));++j}s=9
 return A.Q(A.ib(k,e),$async$oE)
 case 9:g=a0
