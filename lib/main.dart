@@ -38,8 +38,8 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
   bool _isLoading = true;
   int _currentIndex = 0;
 
-final int initialLoad = 20;
-final int myTotalFiles = 200;
+  final int initialLoad = 50;
+  final int myTotalFiles = 200;
   @override
   void initState() {
     super.initState();
