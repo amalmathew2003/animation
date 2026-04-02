@@ -44,9 +44,6 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
   bool _isLoading = true;
   int _currentIndex = 0;
 
-  /// 🔥 NEW: CONTROL NEXT PAGE
-  bool _animationCompleted = false;
-
   final int myTotalFiles = 151;
 
   @override
@@ -56,25 +53,54 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
     _scrollController.addListener(_onScroll);
   }
 
+  double _progress = 0.0; // 🔥 move outside (class level)
+
   Future<void> _loadFrames() async {
     try {
-      List<Future<ui.Image>> futures = [];
+      List<ui.Image> initialFrames = [];
 
-      for (int i = 1; i <= myTotalFiles; i++) {
+      int initialLoad = 10;
+
+      // 🔥 Load first 10 fast
+      for (int i = 1; i <= initialLoad; i++) {
         String frameNumber = i.toString().padLeft(3, '0');
         String path = 'assets/frames/ezgif-frame-$frameNumber.png';
 
-        futures.add(_loadSingleFrame(path));
+        final image = await _loadSingleFrame(path);
+        initialFrames.add(image);
+
+        // 🔥 update progress
+        setState(() {
+          _progress = i / myTotalFiles;
+        });
       }
 
-      final loadedFrames = await Future.wait(futures);
-
       setState(() {
-        _frames = loadedFrames;
+        _frames = initialFrames;
         _isLoading = false;
       });
+
+      // 🔥 Load remaining in background
+      _loadRemainingFrames();
     } catch (e) {
       debugPrint("Frame loading error: $e");
+    }
+  }
+
+  Future<void> _loadRemainingFrames() async {
+    for (int i = 11; i <= myTotalFiles; i++) {
+      String frameNumber = i.toString().padLeft(3, '0');
+      String path = 'assets/it/ezgif-frame-$frameNumber.png';
+
+      final image = await _loadSingleFrame(path);
+      _frames.add(image);
+
+      // 🔥 update progress
+      if (i % 5 == 0) {
+        setState(() {
+          _progress = i / myTotalFiles;
+        });
+      }
     }
   }
 
@@ -104,10 +130,7 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
 
     /// ✅ LAST FRAME DETECTION
     if (percentage >= 1.0) {
-      setState(() => _animationCompleted = true);
-    } else {
-      setState(() => _animationCompleted = false);
-    }
+    } else {}
   }
 
   @override
@@ -115,7 +138,7 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: _isLoading
-          ? const LoadingScreen()
+          ? LoadingScreen(progress: _progress)
           : _frames.isEmpty
           ? const Center(
               child: Text(
