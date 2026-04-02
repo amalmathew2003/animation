@@ -25,7 +25,7 @@ class LoadingScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             Text(
-              "${(progress * 100).toInt()}%", // 🔥 percentage
+              "${(progress * 100).toInt()}%", // 
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 14,
