@@ -2,12 +2,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-// Pages
-import 'package:newscrollanimation/screens/contact_page.dart';
-import 'package:newscrollanimation/screens/experiencepage.dart';
-import 'package:newscrollanimation/screens/gallerypage.dart';
-import 'package:newscrollanimation/screens/modelpage.dart';
-
 // Loading
 import 'package:newscrollanimation/widgets/loading_screen.dart';
 import 'package:flutter/gestures.dart';
@@ -44,10 +38,7 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
   bool _isLoading = true;
   int _currentIndex = 0;
 
-  /// 🔥 NEW: CONTROL NEXT PAGE
-  bool _animationCompleted = false;
-
-  final int myTotalFiles = 240;
+  final int myTotalFiles = 200;
 
   @override
   void initState() {
@@ -62,7 +53,7 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
 
       for (int i = 1; i <= myTotalFiles; i++) {
         String frameNumber = i.toString().padLeft(3, '0');
-        String path = 'assets/it/ezgif-frame-$frameNumber.png';
+        String path = 'assets/vasuu/ezgif-frame-$frameNumber.png';
 
         futures.add(_loadSingleFrame(path));
       }
@@ -104,10 +95,7 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
 
     /// ✅ LAST FRAME DETECTION
     if (percentage >= 1.0) {
-      setState(() => _animationCompleted = true);
-    } else {
-      setState(() => _animationCompleted = false);
-    }
+    } else {}
   }
 
   @override
@@ -138,37 +126,34 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
                   physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [
-                      _buildFullPageSection(
-                        "BORN ON THE TRACK.",
-                        "THE M3 COMPETITION",
-                      ),
-                      _buildFullPageSection("503 HP.", "TWIN-POWER TURBO"),
-                      _buildFullPageSection(
-                        "0-60 IN 3.4s.",
-                        "M-XDRIVE PRECISION",
-                      ),
+                      _buildFullPageSection("MY NAME IS VISWAJITH", ''),
+                      _buildFullPageSection("VASUUUUUUUUUUUUUUUU", "CALL ME"),
+                      // _buildFullPageSection(
+                      //   "0-60 IN 3.4s.",
+                      //   "M-XDRIVE PRECISION",
+                      // ),
 
-                      _buildFullPageSection(
-                        "0-60 IN 3.4s.",
-                        "M-XDRIVE PRECISION",
-                      ),
+                      // _buildFullPageSection(
+                      //   "0-60 IN 3.4s.",
+                      //   "M-XDRIVE PRECISION",
+                      // ),
 
                       /// 🔥 PERFECT CONTROL SPACE (ANIMATION ONLY)
                       SizedBox(height: MediaQuery.of(context).size.height),
 
                       /// 🔥 ALWAYS PRESENT (NO SKIP)
-                      Container(
-                        width: double.infinity,
-                        color: Colors.black,
-                        child: Column(
-                          children: const [
-                            ModelsPage(),
-                            ExperiencePage(),
-                            GalleryPage(),
-                            ContactPage(),
-                          ],
-                        ),
-                      ),
+                      // Container(
+                      //   width: double.infinity,
+                      //   color: Colors.black,
+                      //   child: Column(
+                      //     children: const [
+                      //       ModelsPage(),
+                      //       ExperiencePage(),
+                      //       GalleryPage(),
+                      //       ContactPage(),
+                      //     ],
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -211,10 +196,10 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
             Text(
               subtitle,
               style: const TextStyle(
-                color: Colors.blueAccent,
+                color: Colors.red,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 3,
-                fontSize: 14,
+                fontSize: 30,
               ),
             ),
             const SizedBox(height: 10),
