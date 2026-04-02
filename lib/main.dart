@@ -155,7 +155,7 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
                       children: [
                         _buildFullPageSection("MY NAME IS VASU.", ""),
                         _buildFullPageSection("മനുഷ്യന് അല്ലെ പുള്ളേ", ""),
-                        _buildFullPageSection("", ""),
+                        _buildFullPageSection("EDAA KUTTAAA", ""),
 
                         _buildFullPageSection("", ""),
 
