@@ -38,7 +38,7 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
   bool _isLoading = true;
   int _currentIndex = 0;
 
-  final int initialLoad = 50;
+  final int initialLoad = 20;
   final int myTotalFiles = 200;
   @override
   void initState() {
@@ -51,20 +51,28 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
     try {
       List<ui.Image> initialFrames = [];
 
-      for (int i = 1; i <= initialLoad; i++) {
-        String frameNumber = i.toString().padLeft(3, '0');
-        String path = 'assets/vasuu/ezgif-frame-$frameNumber.png';
+      int batchSize = 3; // ✅ control speed
 
-        final image = await _loadSingleFrame(path);
-        initialFrames.add(image);
+      for (int i = 1; i <= initialLoad; i += batchSize) {
+        List<Future<ui.Image>> batch = [];
+
+        for (int j = i; j < i + batchSize && j <= initialLoad; j++) {
+          String frameNumber = j.toString().padLeft(3, '0');
+          String path = 'assets/vasuu/ezgif-frame-$frameNumber.png';
+
+          batch.add(_loadSingleFrame(path));
+        }
+
+        final images = await Future.wait(batch);
+        initialFrames.addAll(images);
+
+        // 🔥 show early frames immediately
+        setState(() {
+          _frames = List.from(initialFrames);
+          _isLoading = false;
+        });
       }
 
-      setState(() {
-        _frames = initialFrames;
-        _isLoading = false;
-      });
-
-      // 🔥 Load remaining in background
       _loadRemainingFrames();
     } catch (e) {
       debugPrint("Frame loading error: $e");
