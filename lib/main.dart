@@ -47,7 +47,7 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
   /// 🔥 NEW: CONTROL NEXT PAGE
   bool _animationCompleted = false;
 
-  final int myTotalFiles = 151;
+  final int myTotalFiles = 240;
 
   @override
   void initState() {
@@ -62,7 +62,7 @@ class _M3UltimateShowcaseState extends State<M3UltimateShowcase> {
 
       for (int i = 1; i <= myTotalFiles; i++) {
         String frameNumber = i.toString().padLeft(3, '0');
-        String path = 'assets/frames/ezgif-frame-$frameNumber.png';
+        String path = 'assets/it/ezgif-frame-$frameNumber.png';
 
         futures.add(_loadSingleFrame(path));
       }
